@@ -39,7 +39,7 @@ Example is that Debian and Ubuntu are installed with a template on this example,
 The temple kickstarts a virtuall machine with wanted OS, user name, ssh-key and so on. so these machine are empty but has all the needed credentials added. Easy and fast to get up and running for work tasks.
 
 
-Ansible in writen in python codes. But for seting up playbook and etc (will be seen later in the README ) YAML code is used.
+Ansible in writen in python codes. But for setting up playbook and etc (will be seen later in the README ) YAML code is used.
 templates and variables are connected/written in jinja2.
 when ansible talks to a host/module it uses JSON.but that ansible handles all itself.
 Powershell is also used when it comes to windows system
@@ -47,8 +47,17 @@ Powershell is also used when it comes to windows system
 
 
 
-
-
+##### GIT
+GIT and github is used and is recommended so work dosent get lost. specialy when so much is in codes.
+and good thing with ansible togheter with github. its simple to clone to another computer and puch the work from there or keep working on the codes from there.
+some commands that i use alot
+```
+git pull
+git status
+git add
+git commit -m "info"
+git push
+```
 
 
 
@@ -87,4 +96,54 @@ ansible_exam/
     └── docker_host/
         └── tasks/
             └── main.yml
+```
+
+
+
+###
+Gotta make sure you are in the right map
+```
+mkdir -p ~/ansible_exam/
+
+cd ~/path/ansible_exam/
+```
+This will be ground zero from where the work will be done.
+
+
+
+### ansible.cfg
+
+###### creating the ansible configuration file
+ansible.cfg is config file which holds the main settings for ansible to use.
+It makes commands easier and smaller, but when and if wanted there are commands thats can owerwrite with other configs
+
+```
+nano ansible.cfg
+```
+writing and adding wanted config for ansbile to use.
+```
+[defaults]
+inventory = inventory
+
+remote_user = tom
+private_key_file = ~/.ssh/id_ed25519
+
+
+host_key_checking = False      
+retry_files_enabled = False    # don't create *.retry files
+stdout_callback = yaml         # Newer output than the olrd standard
+interpreter_python = auto_silent
+
+forks = 10                     # how many hosts to let ansible connect at once
+timeout = 15                   # SSH timeout, ansible will try for this amount of time before giving up or going to the next one
+
+roles_path = ./roles           # where your roles live
+log_path = ./ansible.log       # log everything here
+
+[privilege_escalation]
+become = True
+become_method = sudo
+become_ask_pass = False        # no sudo password. your user must have NOPASSWD. Very good with templates that has done this before use
+
+
 ```
