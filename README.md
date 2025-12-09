@@ -147,3 +147,58 @@ become_ask_pass = False        # no sudo password. your user must have NOPASSWD.
 
 
 ```
+
+config DONE
+
+
+
+### inventory
+
+inventory is where we store hosts.
+so debian and ubuntu hosts will be added here.
+either DNS name or IP can be added
+Ansible will find them here when needed.
+
+##### creating inventory file
+cd ~/path/ansible_exam
+
+```
+nano inventory
+
+# add
+
+[debian]
+10.8.0.91
+10.8.0.92
+
+
+[ubuntu]
+10.8.0.81
+
+
+[db]
+
+
+[webserver]
+
+``` 
+
+If hosts are added connection can be tested with
+```
+ansible all -m ping
+```
+
+
+inventory DONE
+
+
+
+### playbooks
+
+
+
+##### Creating playbooks
+
+
+
+
