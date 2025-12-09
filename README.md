@@ -75,9 +75,10 @@ ansible_exam/
 │   ├── web.yml
 │   └── docker.yml
 ├── group_vars/
-│   ├── all.yml          # vars for all hosts
-│   ├── debian.yml       # vars for group [debian]
-│   └── ubuntu.yml       # vars for group [ubuntu]
+│   ├── all.yml          
+│   ├── debian.yml
+│   ├── web.yml 
+│   └── ubuntu.yml       
 ├── host_vars/
 │   ├── debian1.yml
 │   └── ubuntu1.yml
@@ -210,7 +211,7 @@ This is where jobs are added.
 like check for hosts if they are online, do security updates or maybe install something.
 Its important to have --- in the beginning of an yaml in ansible
 
-#### Creating playbooks
+### Creating playbooks
 ```
 cd ~/path/ansible_exam
 mkdir playbooks
@@ -222,14 +223,14 @@ In the file a simple playbook with actions that will:
 Test connections
 Update the package and security updates
 
-#### base.yml
+### base.yml
 yaml file will include jobs like:
 test connection
 updates package store
 upgrade distro/security packages
 install some tolls if wanted like curl,git,tmux etc
 
-```
+```yaml
 ---
 - name: Base setup and update on all servers
   hosts: all
@@ -266,3 +267,100 @@ install some tolls if wanted like curl,git,tmux etc
 
 ```
 
+
+
+### web.yml
+
+#### variables
+
+
+some variable can be used here if wanted
+```
+cd ~/path/ansible_exam
+
+mkdir group_vars
+
+nano group_vars/web.yml
+
+# add or write wanted variables
+
+web_document_root: /var/www/html
+web_index_url: "https://raw.githubusercontent.com/exam-mov24/simple_index.html_files/refs/heads/main/index.html"
+# web_index_url: "https://raw.githubusercontent.com/YOURUSER/YOURREPO/main/index.html"
+# web_index_url: "https://raw.githubusercontent.com/YOURUSER/YOURREPO/main/index.html"
+
+
+```
+
+
+#### creating web.yml
+
+```
+nano playbooks/web.yml
+```
+web.yml will be a playbook that handle the action to prepare and create wanted web-server
+this file will:
+update package store, we need the latest packages for Apache and php
+install apache and php
+make sure apache in enabled/active
+depending how index.html is wanted. it can be copied or downloaded from something like github
+it will end with restarting Apache and site should be ready to use
+
+```yaml
+---
+- name: Web server setup Apache, PHP, index.html
+  hosts: web
+  become: true
+  
+  # if run with group_vars/web.yml remove the next 3 lines "vars"
+  vars:
+    web_document_root: "/var/www/html" 
+    web_index_url: "https://raw.githubusercontent.com/exam-mov24/simple_index.html_files/refs/heads/main/index3.html"
+
+
+
+  tasks:
+    - name: Ensure apt cache is updated (Debian/Ubuntu)
+      ansible.builtin.apt:
+        update_cache: yes
+        cache_valid_time: 3600
+      when: ansible_os_family == "Debian"
+      tags: [apt]
+
+    - name: Install Apache and PHP packages (Debian/Ubuntu)
+      ansible.builtin.apt:
+        name:
+          - apache2
+          - libapache2-mod-php
+          - php
+        state: present
+      when: ansible_os_family == "Debian"
+      tags: [apache, php]
+
+    - name: Ensure Apache is enabled and running
+      ansible.builtin.service:
+        name: apache2
+        enabled: true
+        state: started
+      when: ansible_os_family == "Debian"
+      tags: [apache]
+
+    - name: Download index.html from GitHub
+      ansible.builtin.get_url:
+        url: "{{ web_index_url }}"
+        dest: "{{ web_document_root }}/index.html"
+        mode: "0644"
+        owner: root
+        group: root
+      when: ansible_os_family == "Debian"
+      notify: restart apache
+      tags: [content, index]
+
+  handlers:
+    - name: restart apache
+      ansible.builtin.service:
+        name: apache2
+        state: restarted
+      when: ansible_os_family == "Debian"
+
+```

@@ -1,0 +1,54 @@
+---
+- name: Web server setup (Apache + PHP + index.html from GitHub)
+  hosts: web
+  become: true
+
+  vars:
+    web_document_root: "/var/www/html" 
+    web_index_url: "https://raw.githubusercontent.com/exam-mov24/simple_index.html_files/refs/heads/main/index3.html"
+
+
+  tasks:
+    - name: Ensure apt cache is updated (Debian/Ubuntu)
+      ansible.builtin.apt:
+        update_cache: yes
+        cache_valid_time: 3600
+      when: ansible_os_family == "Debian"
+      tags: [apt]
+
+
+    - name: Install Apache and PHP packages (Debian/Ubuntu)
+      ansible.builtin.apt:
+        name:
+          - apache2
+          - libapache2-mod-php
+          - php
+        state: present
+      when: ansible_os_family == "Debian"
+      tags: [apache, php]
+
+    - name: Ensure Apache is enabled and running
+      ansible.builtin.service:
+        name: apache2
+        enabled: true
+        state: started
+      when: ansible_os_family == "Debian"
+      tags: [apache]
+
+    - name: Download index.html from GitHub
+      ansible.builtin.get_url:
+        url: "{{ web_index_url }}"
+        dest: "{{ web_document_root }}/index.html"
+        mode: "0644"
+        owner: root
+        group: root
+      when: ansible_os_family == "Debian"
+      notify: restart apache
+      tags: [content, index]
+
+  handlers:
+    - name: restart apache
+      ansible.builtin.service:
+        name: apache2
+        state: restarted
+      when: ansible_os_family == "Debian"
