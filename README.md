@@ -188,7 +188,16 @@ If hosts are added connection can be tested with
 ```
 ansible all -m ping
 ```
-
+output should be something like:
+```
+10.8.0.81 | SUCCESS => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python3"
+    },
+    "changed": false,
+    "ping": "pong"
+}
+```
 
 inventory DONE
 
@@ -196,10 +205,19 @@ inventory DONE
 
 ### playbooks
 
-
+Playbook
+This is where jobs are added.
+like check for hosts if they are online, do security updates or maybe install something.
 
 #### Creating playbooks
+```
+cd ~/path/ansible_exam
+mkdir playbooks
+```
+nano playbooks/base.yml
+```
 
+```
 
 
 
