@@ -47,7 +47,7 @@ Powershell is also used when it comes to windows system
 
 
 
-##### GIT
+#### GIT
 GIT and github is used and is recommended so work dosent get lost. specialy when so much is in codes.
 and good thing with ansible togheter with github. its simple to clone to another computer and puch the work from there or keep working on the codes from there.
 some commands that i use alot
@@ -57,6 +57,7 @@ git status
 git add
 git commit -m "info"
 git push
+gitignore
 ```
 
 
@@ -113,7 +114,7 @@ This will be ground zero from where the work will be done.
 
 ### ansible.cfg
 
-###### creating the ansible configuration file
+#### creating the ansible configuration file
 ansible.cfg is config file which holds the main settings for ansible to use.
 It makes commands easier and smaller, but when and if wanted there are commands thats can owerwrite with other configs
 
@@ -197,7 +198,7 @@ inventory DONE
 
 
 
-##### Creating playbooks
+#### Creating playbooks
 
 
 
