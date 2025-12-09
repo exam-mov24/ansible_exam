@@ -208,16 +208,61 @@ inventory DONE
 Playbook
 This is where jobs are added.
 like check for hosts if they are online, do security updates or maybe install something.
+Its important to have --- in the beginning of an yaml in ansible
 
 #### Creating playbooks
 ```
 cd ~/path/ansible_exam
 mkdir playbooks
 ```
+```
 nano playbooks/base.yml
 ```
+In the file a simple playbook with actions that will:
+Test connections
+Update the package and security updates
+
+#### base.yml
+yaml file will include jobs like:
+test connection
+updates package store
+upgrade distro/security packages
+install some tolls if wanted like curl,git,tmux etc
 
 ```
+---
+- name: Base setup and update on all servers
+  hosts: all
+  become: true
+
+  tasks:
+    - name: Test connection with ping
+      ansible.builtin.ping:
+      tags: [always]
+
+    - name: Update apt cache (Debian/Ubuntu)
+      ansible.builtin.apt:
+        update_cache: yes
+        cache_valid_time: 3600
+      when: ansible_os_family == "Debian"
+      tags: [apt]
+
+    - name: Upgrade all packages to latest version (Debian/Ubuntu)
+      ansible.builtin.apt:
+        upgrade: dist
+      when: ansible_os_family == "Debian"
+      tags: [apt, upgrade]
 
 
+    - name: Install some base tools (Debian/Ubuntu)
+      ansible.builtin.apt:
+        name:
+          - htop
+          - curl
+          - git
+        state: present
+      when: ansible_os_family == "Debian"
+      tags: [tools]
+
+```
 

@@ -1,0 +1,39 @@
+---
+- name: Base setup and update on all servers
+  hosts: all
+  become: true
+
+  tasks:
+    - name: Test connection with ping
+      ansible.builtin.ping:
+      tags: [always]
+
+    - name: Update apt cache (Debian/Ubuntu)
+      ansible.builtin.apt:
+        update_cache: yes
+        cache_valid_time: 3600
+      when: ansible_os_family == "Debian"
+      tags: [apt]
+
+    - name: Upgrade all packages to latest version (Debian/Ubuntu)
+      ansible.builtin.apt:
+        upgrade: dist
+      when: ansible_os_family == "Debian"
+      tags: [apt, upgrade]
+
+
+    - name: Upgrade all packages to latest version (Debian/Ubuntu)
+      ansible.builtin.apt:
+        upgrade: dist
+      when: ansible_os_family == "Debian"
+      tags: [apt, upgrade]
+
+    - name: Install some base tools (Debian/Ubuntu)
+      ansible.builtin.apt:
+        name:
+          - htop
+          - curl
+          - git
+        state: present
+      when: ansible_os_family == "Debian"
+      tags: [tools]
