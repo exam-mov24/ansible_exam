@@ -266,8 +266,15 @@ install some tolls if wanted like curl,git,tmux etc
       tags: [tools]
 
 ```
+To run
+```bash
+# Run the whole playbook
+ansible-playbook playbooks/base.yml
 
+# Run certain tag's
+ansible-playbook playbooks/base.yml --tags apt
 
+```
 
 ### web.yml
 
@@ -365,6 +372,136 @@ it will end with restarting Apache and site should be ready to use
 
 ```
 
+To run
+```bash
+# to run the whole playbook
+ansible-playbook playbooks/web.yml
+
+# Only refresh index.html content
+ansible-playbook playbooks/web.yml --tags content
+
+```
+
+
 
 web.yml DONE
+
+
+
+
+### Docker playbook
+
+This playbook will contain the part with installing docker and installing an application with  docker.
+
+Also here preparation for variables can be used.
+
+```bash
+cd ~/path/ansible_exam
+```
+
+create variable file
+```bash
+nano group_vars/docker.yml
+```
+```yaml
+docker_users:
+  - YOURUSER
+# will be added to docker group on docker hosts
+
+# These are not needed to be used if not wanted
+docker_deploy_it_tools: true
+docker_it_tools_port: "8080"
+# host port http://server:8080
+
+```
+
+
+#### docker.yml
+
+Creating the playbook
+It will contain:
+updating package index
+installing docker engine and the tolls it might need like python3
+checking that enablade
+Adding wanted user to docker group
+and in the end  IT-tools will be installed.
+
+
+
+
+
+```bash
+cd ~/path/ansible_exam
+nano playbooks/docker.yml
+
+```
+
+```yaml
+
+---
+- name: Docker host setup
+  hosts: docker
+  become: true
+
+  tasks:
+    - name: Ensure apt cache is updated (Debian/Ubuntu)
+      ansible.builtin.apt:
+        update_cache: yes
+        cache_valid_time: 3600
+      when: ansible_os_family == "Debian"
+      tags: [apt]
+
+    - name: Install Docker engine and tools (Debian/Ubuntu)
+      ansible.builtin.apt:
+        name:
+          - docker.io
+#          - docker-compose-plugin
+          - python3-docker
+        state: present
+      when: ansible_os_family == "Debian"
+      tags: [docker]
+
+    - name: Ensure docker service is enabled and running
+      ansible.builtin.service:
+        name: docker
+        enabled: true
+        state: started
+      tags: [docker]
+
+    - name: Add users to docker group
+      ansible.builtin.user:
+        name: "{{ item }}"
+        groups: docker
+        append: true
+      loop: "{{ docker_users | default([]) }}"
+      when: docker_users is defined
+      tags: [docker, users]
+
+    - name: Ensure it-tools container is running
+      community.docker.docker_container:
+        name: it-tools
+        image: ghcr.io/corentinth/it-tools:latest
+        restart_policy: unless-stopped
+        ports:
+          - "{{ docker_it_tools_port }}:80"
+      when:
+        - docker_deploy_it_tools | default(false)
+      tags: [containers, it_tools]
+
+```
+
+to run playbook:
+```bash
+# Run the whole book
+ansible-playbook playbooks/docker.yml
+
+# Run with tag's
+ansible-playbook playbooks/docker.yml --tags it_tools 
+
+```
+from example above, application like It-Tools should be available from: http:hostIP:8080
+
+
+docker.yml DONE
+
 

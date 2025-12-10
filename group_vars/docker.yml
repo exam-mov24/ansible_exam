@@ -1,0 +1,6 @@
+docker_users:
+  - tom     # will be added to docker group on docker hosts
+
+# Optional: enable or disable deploying it-tools
+docker_deploy_it_tools: true
+docker_it_tools_port: "8080"    # host port → http://server:8080
