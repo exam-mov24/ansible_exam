@@ -1,0 +1,11 @@
+---
+web_document_root: /var/www/html
+web_index_template: "index.html.j2"
+
+web_page_title: "Ansible Web Server"
+web_page_message: "This page was deployed by the apache_php role."
+
+apache_packages:
+  - apache2
+  - libapache2-mod-php
+  - php

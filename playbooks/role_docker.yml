@@ -1,0 +1,7 @@
+---
+- name: Docker host setup with docker_host role
+  hosts: docker
+  become: true
+
+  roles:
+    - docker_host

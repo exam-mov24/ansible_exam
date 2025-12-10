@@ -1,0 +1,8 @@
+---
+- name: Web server setup with apache_php role
+  hosts: web
+  become: true
+
+  roles:
+    - apache_php
+

@@ -1,0 +1,33 @@
+---
+- name: check if apt cache is updated
+  ansible.builtin.apt:
+    update_cache: yes
+    cache_valid_time: "{{ apt_cache_valid_time | default(3600) }}"
+  when: ansible_os_family == "Debian"
+  tags: [apt, apache_php]
+
+- name: Install Apache and PHP packages
+  ansible.builtin.apt:
+    name: "{{ apache_packages }}"
+    state: present
+  when: ansible_os_family == "Debian"
+  tags: [apache, php, apache_php]
+
+- name: Check if Apache service is enabled and running
+  ansible.builtin.service:
+    name: "{{ apache_service_name }}"
+    enabled: true
+    state: started
+  when: ansible_os_family == "Debian"
+  tags: [apache, apache_php]
+
+- name: Deploy index.html from template
+  ansible.builtin.template:
+    src: "{{ web_index_template }}"
+    dest: "{{ web_document_root }}/index.html"
+    owner: root
+    group: root
+    mode: "0644"
+  when: ansible_os_family == "Debian"
+  notify: restart apache
+  tags: [content, index, apache_php]

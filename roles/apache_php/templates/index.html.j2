@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>{{ web_page_title }}</title>
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #204060, #5070c0);
+      color: #f5f5f5;
+      overflow: hidden;
+    }
+
+    .box {
+      text-align: center;
+      position: relative;
+      z-index: 2; /* above the snow */
+    }
+
+    h1 {
+      font-size: 3rem;
+      margin-bottom: 0.5rem;
+    }
+
+    p {
+      font-size: 1.2rem;
+      opacity: 0.9;
+    }
+
+    small {
+      display: block;
+      margin-top: 1rem;
+      opacity: 0.7;
+      font-size: 0.9rem;
+    }
+
+    /* Snow layer */
+    .snow {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      overflow: hidden;
+      z-index: 1;
+    }
+
+    .snowflake {
+      position: absolute;
+      top: -10px;
+      width: 6px;
+      height: 6px;
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 50%;
+      box-shadow: 0 0 6px rgba(255, 255, 255, 0.8);
+      animation-name: snow-fall;
+      animation-timing-function: linear;
+      animation-iteration-count: infinite;
+    }
+
+    @keyframes snow-fall {
+      0% {
+        transform: translate3d(0, -10px, 0);
+        opacity: 0;
+      }
+      10% {
+        opacity: 1;
+      }
+      100% {
+        transform: translate3d(20px, 110vh, 0);
+        opacity: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Snow overlay -->
+  <div class="snow">
+    <div class="snowflake" style="left: 5%;  animation-duration: 10s; animation-delay: 0s;"></div>
+    <div class="snowflake" style="left: 15%; animation-duration: 12s; animation-delay: -2s;"></div>
+    <div class="snowflake" style="left: 25%; animation-duration: 9s;  animation-delay: -4s;"></div>
+    <div class="snowflake" style="left: 35%; animation-duration: 11s; animation-delay: -1s;"></div>
+    <div class="snowflake" style="left: 45%; animation-duration: 13s; animation-delay: -3s;"></div>
+    <div class="snowflake" style="left: 55%; animation-duration: 10s; animation-delay: -5s;"></div>
+    <div class="snowflake" style="left: 65%; animation-duration: 14s; animation-delay: -6s;"></div>
+    <div class="snowflake" style="left: 75%; animation-duration: 9s;  animation-delay: -7s;"></div>
+    <div class="snowflake" style="left: 85%; animation-duration: 12s; animation-delay: -8s;"></div>
+    <div class="snowflake" style="left: 95%; animation-duration: 11s; animation-delay: -9s;"></div>
+
+    <div class="snowflake" style="left: 10%; animation-duration: 16s; animation-delay: -3s;"></div>
+    <div class="snowflake" style="left: 20%; animation-duration: 15s; animation-delay: -6s;"></div>
+    <div class="snowflake" style="left: 30%; animation-duration: 17s; animation-delay: -1s;"></div>
+    <div class="snowflake" style="left: 40%; animation-duration: 13s; animation-delay: -4s;"></div>
+    <div class="snowflake" style="left: 50%; animation-duration: 18s; animation-delay: -2s;"></div>
+    <div class="snowflake" style="left: 60%; animation-duration: 14s; animation-delay: -7s;"></div>
+    <div class="snowflake" style="left: 70%; animation-duration: 19s; animation-delay: -5s;"></div>
+    <div class="snowflake" style="left: 80%; animation-duration: 16s; animation-delay: -8s;"></div>
+    <div class="snowflake" style="left: 90%; animation-duration: 15s; animation-delay: -9s;"></div>
+  </div>
+
+  <div class="box">
+    <h1>{{ web_page_title }}</h1>
+    <p>{{ web_page_message }}</p>
+    <small>
+      Host: {{ inventory_hostname }}
+      {% if host_display_name is defined %} ({{ host_display_name }}){% endif %}
+      – OS: {{ ansible_distribution }} {{ ansible_distribution_version }}
+    </small>
+  </div>
+</body>
+</html>

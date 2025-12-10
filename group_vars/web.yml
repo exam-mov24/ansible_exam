@@ -1,0 +1,6 @@
+---
+web_document_root: /var/www/html
+
+# Text for the template used by apache_php role
+# web_page_title: "Examensprojekt MOV24"
+# web_page_message: "Denna sida är deployad med Ansible (apache_php-rollen)."

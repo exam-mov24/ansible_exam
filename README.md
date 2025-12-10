@@ -576,3 +576,275 @@ add wanted vars:
 ubuntu_motd: "Managed by Ansible (Ubuntu group)"
 
 ```
+
+
+
+
+### Roles
+
+Roles can be used to pack everything that is needed for a certaing thing in one place
+one clean folder to do the job for a certaing task. like getting a web-server up and running with more wanted config and settings.
+Also good to have when a library grows and the structure will look better and have an easier readability
+
+#### Creating first role:
+This role will handle web-server and make it host an web-site
+```bash
+# where to be
+cd ~/path/ansible_exam
+
+# Create needed dir
+mkdir -p roles/apache_php/tasks
+mkdir -p roles/apache_php/handlers
+mkdir -p roles/apache_php/templates
+mkdir -p roles/apache_php/defaults
+mkdir -p roles/apache_php/vars
+mkdir -p roles/apache_php/files
+# create needed yml files or more like wanted yml files
+nano roles/apache_php/tasks/main.yml
+nano roles/apache_php/handlers/main.yml
+nano roles/apache_php/templates/index.html.j2
+nano roles/apache_php/defaults/main.yml
+nano roles/apache_php/vars/main.yml
+```
+
+what to add in each yml file
+```
+nano roles/apache_php/tasks/main.yml
+```
+```yml
+---
+- name: check if apt cache is updated
+  ansible.builtin.apt:
+    update_cache: yes
+    cache_valid_time: "{{ apt_cache_valid_time | default(3600) }}"
+  when: ansible_os_family == "Debian"
+  tags: [apt, apache_php]
+
+- name: Install Apache and PHP packages
+  ansible.builtin.apt:
+    name: "{{ apache_packages }}"
+    state: present
+  when: ansible_os_family == "Debian"
+  tags: [apache, php, apache_php]
+
+- name: Check if Apache service is enabled and running
+  ansible.builtin.service:
+    name: "{{ apache_service_name }}"
+    enabled: true
+    state: started
+  when: ansible_os_family == "Debian"
+  tags: [apache, apache_php]
+
+- name: Deploy index.html from template
+  ansible.builtin.template:
+    src: "{{ web_index_template }}"
+    dest: "{{ web_document_root }}/index.html"
+    owner: root
+    group: root
+    mode: "0644"
+  when: ansible_os_family == "Debian"
+  notify: restart apache
+  tags: [content, index, apache_php]
+
+```
+
+```
+nano roles/apache_php/handlers/main.yml
+```
+```yaml
+---
+- name: restart apache
+  ansible.builtin.service:
+    name: "{{ apache_service_name }}"
+    state: restarted
+
+```
+
+```
+nano roles/apache_php/templates/index.html.j2
+```
+```yaml
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>{{ web_page_title }}</title>
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #204060, #5070c0);
+      color: #f5f5f5;
+      overflow: hidden;
+    }
+
+    .box {
+      text-align: center;
+      position: relative;
+      z-index: 2; /* above the snow */
+    }
+
+    h1 {
+      font-size: 3rem;
+      margin-bottom: 0.5rem;
+    }
+
+    p {
+      font-size: 1.2rem;
+      opacity: 0.9;
+    }
+
+    small {
+      display: block;
+      margin-top: 1rem;
+      opacity: 0.7;
+      font-size: 0.9rem;
+    }
+
+    /* Snow layer */
+    .snow {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      overflow: hidden;
+      z-index: 1;
+    }
+
+    .snowflake {
+      position: absolute;
+      top: -10px;
+      width: 6px;
+      height: 6px;
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 50%;
+      box-shadow: 0 0 6px rgba(255, 255, 255, 0.8);
+      animation-name: snow-fall;
+      animation-timing-function: linear;
+      animation-iteration-count: infinite;
+    }
+
+    @keyframes snow-fall {
+      0% {
+        transform: translate3d(0, -10px, 0);
+        opacity: 0;
+      }
+      10% {
+        opacity: 1;
+      }
+      100% {
+        transform: translate3d(20px, 110vh, 0);
+        opacity: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Snow overlay -->
+  <div class="snow">
+    <div class="snowflake" style="left: 5%;  animation-duration: 10s; animation-delay: 0s;"></div>
+    <div class="snowflake" style="left: 15%; animation-duration: 12s; animation-delay: -2s;"></div>
+    <div class="snowflake" style="left: 25%; animation-duration: 9s;  animation-delay: -4s;"></div>
+    <div class="snowflake" style="left: 35%; animation-duration: 11s; animation-delay: -1s;"></div>
+    <div class="snowflake" style="left: 45%; animation-duration: 13s; animation-delay: -3s;"></div>
+    <div class="snowflake" style="left: 55%; animation-duration: 10s; animation-delay: -5s;"></div>
+    <div class="snowflake" style="left: 65%; animation-duration: 14s; animation-delay: -6s;"></div>
+    <div class="snowflake" style="left: 75%; animation-duration: 9s;  animation-delay: -7s;"></div>
+    <div class="snowflake" style="left: 85%; animation-duration: 12s; animation-delay: -8s;"></div>
+    <div class="snowflake" style="left: 95%; animation-duration: 11s; animation-delay: -9s;"></div>
+
+    <div class="snowflake" style="left: 10%; animation-duration: 16s; animation-delay: -3s;"></div>
+    <div class="snowflake" style="left: 20%; animation-duration: 15s; animation-delay: -6s;"></div>
+    <div class="snowflake" style="left: 30%; animation-duration: 17s; animation-delay: -1s;"></div>
+    <div class="snowflake" style="left: 40%; animation-duration: 13s; animation-delay: -4s;"></div>
+    <div class="snowflake" style="left: 50%; animation-duration: 18s; animation-delay: -2s;"></div>
+    <div class="snowflake" style="left: 60%; animation-duration: 14s; animation-delay: -7s;"></div>
+    <div class="snowflake" style="left: 70%; animation-duration: 19s; animation-delay: -5s;"></div>
+    <div class="snowflake" style="left: 80%; animation-duration: 16s; animation-delay: -8s;"></div>
+    <div class="snowflake" style="left: 90%; animation-duration: 15s; animation-delay: -9s;"></div>
+  </div>
+
+  <div class="box">
+    <h1>{{ web_page_title }}</h1>
+    <p>{{ web_page_message }}</p>
+    <small>
+      Host: {{ inventory_hostname }}
+      {% if host_display_name is defined %} ({{ host_display_name }}){% endif %}
+      – OS: {{ ansible_distribution }} {{ ansible_distribution_version }}
+    </small>
+  </div>
+</body>
+</html>
+
+
+```
+
+```
+nano roles/apache_php/defaults/main.yml
+```
+```yaml
+---
+web_document_root: /var/www/html
+web_index_template: "index.html.j2"
+
+web_page_title: "Ansible Web Server"
+web_page_message: "This page was deployed by the apache_php role."
+
+apache_packages:
+  - apache2
+  - libapache2-mod-php
+  - php
+
+```
+
+```
+---
+nano roles/apache_php/vars/main.yml
+```
+```yaml
+apache_service_name: "apache2"
+
+```
+
+Now that role book is ready another playbook alot simplier one can be made. with nless info in it.
+```bash
+nano playbook/role_web.yml
+```
+add:
+```yaml
+---
+- name: Web server setup with apache_php role
+  hosts: web
+  become: true
+
+  roles:
+    - apache_php
+
+
+```
+That is all that is needed for the same playbook that earlier created a web page.
+to run it:
+```bash
+ansible-playbook playbook/role_web.yml
+```
+from the hosts in inventory under web, is now hosting web-page on
+http://hostIP
+
+
+
+
+
+```bash
+# docker host
+mkdir -p roles/docker_host/tasks
+nano roles/docker_host/tasks/main.yml
+```
+
+
+
