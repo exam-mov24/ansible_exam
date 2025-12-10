@@ -1,0 +1,3 @@
+---
+# Debian-specific settings
+debian_motd: "Managed by Ansible (Debian group)"

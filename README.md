@@ -505,3 +505,74 @@ from example above, application like It-Tools should be available from: http:hos
 docker.yml DONE
 
 
+#### some info
+Now everything above works.
+but to make it easier and little mor felxibel more variable maps will be made.
+Its good to know that vars overwrite whats on the playbooks, if they have something in them.
+
+
+
+
+#### Fixing vars
+These are not needed but good and fun to have.
+
+
+```
+├── group_vars/
+│   ├── all.yml          
+│   ├── debian.yml
+│   ├── web.yml 
+│   └── ubuntu.yml       
+├── host_vars/
+│   ├── debian1.yml
+│   └── ubuntu1.yml
+```
+
+#### all.yml  vars
+These variables will be effected on all playbooks unless its not wanted.
+
+```bash
+nano group_vars/all.yml
+```
+add wanted vars.
+```yaml
+---
+# How long apt metadata is considered fresh (seconds)
+apt_cache_valid_time: 3600
+
+# Base packages you want everywhere
+common_packages:
+  - htop
+  - curl
+  - vim
+```
+
+
+#### debian.yml  vars
+variables that are specific for [debian] group
+
+```bash
+nano group_vars/debian.yml
+```
+add wanted vars
+
+```yaml
+---
+# Debian-specific settings
+debian_motd: "Managed by Ansible (Debian group)"
+
+```
+
+#### ubuntu.yml vars
+
+```bash
+nano group:vars/ubuntu.yml
+```
+
+add wanted vars:
+
+```yaml
+---
+ubuntu_motd: "Managed by Ansible (Ubuntu group)"
+
+```

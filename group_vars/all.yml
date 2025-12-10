@@ -1,0 +1,10 @@
+---
+# How long apt metadata is considered fresh (seconds)
+apt_cache_valid_time: 3600
+
+# Base packages you want everywhere
+common_packages:
+  - htop
+  - curl
+  - git
+  - vim
