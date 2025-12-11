@@ -21,7 +21,7 @@ Ansible is an agentless automation tool that you install on a single host.
 Example is that you install it on you desktop or a dedicated server for it and it can be installed simply with very few commands or step.
 For Ubuntu all that is needed for it to be installed is running command to update packaged first and than running the install command:
 ```bash
-# update packade manager
+# update package manager
 apt update
 
 # install ansible
@@ -36,7 +36,7 @@ Ansible uses SSH for connection and to manage hosts. No agents needs to be insta
 Its just important to know that the host has ssh enabled and that ansible has the passwrod or ssh-key for the host.
 My way to run this is to have ready template to create/install my hosts.
 Example is that Debian and Ubuntu are installed with a template on this example, proxmox.
-The temple kickstarts a virtuall machine with wanted OS, user name, ssh-key and so on. so these machine are empty but has all the needed credentials added. Easy and fast to get up and running for work tasks.
+The template kickstarts a virtuall machine with wanted OS, user name, ssh-key and so on. so these machine are empty but has all the needed credentials added. Easy and fast to get up and running for work tasks.
 
 
 Ansible in writen in python codes. But for setting up playbook and etc (will be seen later in the README ) YAML code is used.
@@ -578,7 +578,7 @@ debian_motd: "Managed by Ansible (Debian group)"
 #### ubuntu.yml vars
 
 ```bash
-nano group:vars/ubuntu.yml
+nano group_vars/ubuntu.yml
 ```
 
 add wanted vars:
