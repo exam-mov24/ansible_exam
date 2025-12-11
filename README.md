@@ -75,7 +75,8 @@ ansible_exam/
 │   ├── web.yml
 │   └── docker.yml
 ├── group_vars/
-│   ├── all.yml          
+│   ├── all.yml 
+│   ├── db.yml         
 │   ├── debian.yml
 │   ├── web.yml 
 │   └── ubuntu.yml       
@@ -83,6 +84,8 @@ ansible_exam/
 │   ├── debian1.yml
 │   └── ubuntu1.yml
 └── roles/
+    ├── mariadb_server/
+    │       └── 
     ├── apache_php/
     │   ├── tasks/
     │   │   └── main.yml
@@ -845,6 +848,77 @@ http://hostIP
 mkdir -p roles/docker_host/tasks
 nano roles/docker_host/tasks/main.yml
 ```
+add:
+```yaml
+---
+- name: Ensure apt cache is updated
+  ansible.builtin.apt:
+    update_cache: yes
+    cache_valid_time: "{{ apt_cache_valid_time | default(3600) }}"
+  when: ansible_os_family == "Debian"
+  tags: [apt, docker_host]
+
+- name: Install Docker engine and tools
+  ansible.builtin.apt:
+    name:
+      - docker.io
+      - docker-compose-plugin
+      - python3-docker
+    state: present
+  when: ansible_os_family == "Debian"
+  tags: [docker, docker_host]
+
+- name: Check that docker service is enabled and running
+  ansible.builtin.service:
+    name: docker
+    enabled: true
+    state: started
+  tags: [docker, docker_host]
+
+- name: Add users to docker group
+  ansible.builtin.user:
+    name: "{{ item }}"
+    groups: docker
+    append: true
+  loop: "{{ docker_users | default([]) }}"
+  when: docker_users is defined
+  tags: [docker, users, docker_host]
+
+- name: Install and check that it-tools container is running
+  community.docker.docker_container:
+    name: it-tools
+    image: ghcr.io/corentinth/it-tools:latest
+    restart_policy: unless-stopped
+    ports:
+      - "{{ docker_it_tools_port | default('8080') }}:80"
+  when:
+    - docker_deploy_it_tools | default(false)
+  tags: [containers, it_tools, docker_host]
+
+```
+And a new playbook
+```bash
+cd  ~/ansible_exam/
+nano ansible_exam/playbooks/role_docker.yml
+```
+```yaml
+---
+- name: Docker host setup with docker_host role
+  hosts: docker
+  become: true
+
+  roles:
+    - docker_host
+
+```
+This will do the same as docker.yml playbook but looks better
+run:
+```bash
+ansible-playbook playbooks/role_docker.yml
+```
+site can now be reached:
+http://vmip:8080
 
 
+### MariaDB role
 

@@ -1,0 +1,13 @@
+db_engine: mariadb
+
+db_name: exam_24
+db_user: exam_24
+db_password: "DontworryBehappy"   # change this
+
+# option 10.8.0.% or specific host IP
+db_app_host: "10.8.0.86"
+
+# listen:
+# 127.0.0.1 = only local
+# 0.0.0.0   = all interfaces. should not be left like this if it is in prod.
+mariadb_bind_address: "0.0.0.0"
