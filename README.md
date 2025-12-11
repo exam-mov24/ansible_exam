@@ -507,7 +507,7 @@ ansible-playbook playbooks/docker.yml
 ansible-playbook playbooks/docker.yml --tags it_tools 
 
 ```
-from example above, application like It-Tools should be available from: http:hostIP:8080
+from example above, application like It-Tools should be available from: http://hostIP:8080
 
 
 docker.yml DONE
