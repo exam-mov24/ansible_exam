@@ -85,7 +85,15 @@ ansible_exam/
 │   └── ubuntu1.yml
 └── roles/
     ├── mariadb_server/
-    │       └── 
+    ├── defaults/
+    │   └── main.yml
+    ├── vars/
+    │   └── main.yml
+    ├── tasks/
+    │   └── main.yml
+    ├── handlers/
+    │   └── main.yml
+    │       
     ├── apache_php/
     │   ├── tasks/
     │   │   └── main.yml
@@ -98,6 +106,7 @@ ansible_exam/
     │   │   └── main.yml
     │   └── defaults/
     │       └── main.yml
+    │
     └── docker_host/
         └── tasks/
             └── main.yml
@@ -921,4 +930,206 @@ http://vmip:8080
 
 
 ### MariaDB role
+
+Next up is an role that will have verything it needs to install and setup an SQL DB. In this role it will be MariaDB
+
+start.
+```bash
+cd ~/ansible_exam/
+```
+add vars
+```bash
+nano ~/ansible_exam/groub_vars/
+```
+add:
+```yml
+db_engine: mariadb
+
+db_name: exam_24
+db_user: exam_24
+# Password access your db, it should be really strong
+db_password: "DontworryBehappy"
+
+# option 10.8.0.% or specific host IP
+db_app_host: "10.8.0.86"
+
+# listen:
+# 127.0.0.1 = only local
+# 0.0.0.0   = all interfaces. should not be left like this if it is in prod.
+mariadb_bind_address: "0.0.0.0"
+
+```
+
+
+and now its time for roles.
+here all the info about what is needed to be done will be.
+
+Setup
+```
+roles/
+└── mariadb_server/
+    ├── defaults/
+    │   └── main.yml
+    ├── vars/
+    │   └── main.yml
+    ├── tasks/
+    │   └── main.yml
+    └── handlers/
+        └── main.yml
+```
+
+new command that will create several path and dir att once
+Just need to make sure you are in the right map where you want it to build from
+```bash
+mkdir -p roles/mariadb_server/{defaults,vars,tasks,handlers}
+```
+one click and those dir are created
+![created](image-1.png)
+
+next up in the yml files
+
+#### mariadb_server/defaults/main.yml
+Default is a fallback, its has less prio to be run than: group_vars db.yml
+so if db.yml is not there, default will be run and config from it used.
+
+```bash
+nano roles/mariadb_server/defaults/main.yml
+```
+add
+```yml
+---
+db_engine: mariadb
+
+db_name: exam_24
+db_user: exam_24
+db_password: "SuperSecret123"
+db_app_host: "%"
+
+mariadb_bind_address: "0.0.0.0"
+mariadb_root_socket: "/var/run/mysqld/mysqld.sock"
+
+``` 
+
+#### roles/mariadb_server/vars/main.yml
+wanted packages here.
+```bash
+nano roles/mariadb_server/vars/main.yml
+```
+add
+```yaml
+---
+mariadb_packages:
+  - mariadb-server
+  - mariadb-client
+  - python3-pymysql
+
+mariadb_service_name: "mariadb"
+mariadb_config_file: "/etc/mysql/mariadb.conf.d/50-server.cnf"
+
+```
+
+##### roles/mariadb_server/tasks/main.yml
+Here are the task tha is to be done and information are gathered from the other dir with variables.
+
+```bash
+nano roles/mariadb_server/tasks/main.yml
+```
+add
+```yaml
+---
+- name: Ensure apt cache is updated
+  ansible.builtin.apt:
+    update_cache: yes
+    cache_valid_time: "{{ apt_cache_valid_time | default(3600) }}"
+  when: ansible_os_family == "Debian"
+  tags: [apt, mariadb]
+
+- name: Install MariaDB server and Python driver
+  ansible.builtin.apt:
+    name: "{{ mariadb_packages | default(['mariadb-server', 'mariadb-client', 'python3-pymysql']) }}"
+    state: present
+  when: ansible_os_family == "Debian"
+  tags: [mariadb, packages]
+
+- name: Ensure MariaDB service is enabled and running
+  ansible.builtin.service:
+    name: "{{ mariadb_service_name | default('mariadb') }}"
+    enabled: true
+    state: started
+  tags: [mariadb, service]
+
+- name: Configure MariaDB bind-address
+  ansible.builtin.lineinfile:
+    path: "{{ mariadb_config_file | default('/etc/mysql/mariadb.conf.d/50-server.cnf') }}"
+    regexp: '^bind-address'
+    line: "bind-address = {{ mariadb_bind_address }}"
+    backup: yes
+  notify: restart mariadb
+  tags: [mariadb, config]
+
+- name: Ensure application database exists
+  community.mysql.mysql_db:
+    name: "{{ db_name }}"
+    state: present
+    login_unix_socket: "{{ mariadb_root_socket | default('/var/run/mysqld/mysqld.sock') }}"
+  tags: [mariadb, db]
+
+- name: Ensure application DB user exists with privileges
+  community.mysql.mysql_user:
+    name: "{{ db_user }}"
+    password: "{{ db_password }}"
+    host: "{{ db_app_host }}"
+    priv: "{{ db_name }}.*:ALL"
+    state: present
+    login_unix_socket: "{{ mariadb_root_socket | default('/var/run/mysqld/mysqld.sock') }}"
+  tags: [mariadb, user]
+
+```
+
+
+#### roles/mariadb_server/handlers/main.yml
+
+```bash
+nano roles/mariadb_server/handlers/main.yml
+```
+
+add
+```yml
+---
+- name: restart mariadb
+  ansible.builtin.service:
+    name: "{{ mariadb_service_name | default('mariadb') }}"
+    state: restarted
+```
+
+Now the role book is done
+All that is needed now is playbook for it so ansible can run it later
+
+Create playbook:
+```bash
+nano playbooks/role_db.yml
+```
+add
+```yml
+---
+- name: MariaDB server setup
+  hosts: db
+  become: true
+
+  roles:
+    - mariadb_server
+
+
+```
+
+Now its ready to be run.
+Add wanted hosts ip or dns to [db]
+Run the book
+```bash
+ansible-playbook playbooks/role_db.yml
+``` 
+check from terminal if it is upp and running
+```bash
+mysql -h 10.8.0.x -u exam_24 -p exam_24
+```
 

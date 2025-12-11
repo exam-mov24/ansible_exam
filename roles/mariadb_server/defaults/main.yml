@@ -1,0 +1,10 @@
+---
+db_engine: mariadb
+
+db_name: exam_app
+db_user: exam_user
+db_password: "UseAstrongPassword"
+db_app_host: "%"
+
+mariadb_bind_address: "0.0.0.0"
+mariadb_root_socket: "/var/run/mysqld/mysqld.sock"

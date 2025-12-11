@@ -2,10 +2,10 @@ db_engine: mariadb
 
 db_name: exam_24
 db_user: exam_24
-db_password: "DontworryBehappy"   # change this
+db_password: "DontworryBehappy"
 
 # option 10.8.0.% or specific host IP
-db_app_host: "10.8.0.86"
+db_app_host: "10.8.0.%"
 
 # listen:
 # 127.0.0.1 = only local
