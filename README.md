@@ -4,14 +4,10 @@
 This project will be about ansible and how it works.
 Setup in this project will be 
 1 Manager vm. Ubuntu OS desktop version. From here ansible will manage other hosts
-1 Ubuntu 24.04 server
-2 Debian 13 server
+5 Ubuntu 24.04 server
+5 Debian 12 server
 
-1 Ubuntu server will be a web-server
-1 debian will handle docker and application like IT-Tools
-1 debian will become an SQL DB
-
-
+configuring 
 
 
 
@@ -23,7 +19,7 @@ For Ubuntu all that is needed for it to be installed is running command to updat
 ```bash
 # update package manager
 apt update
-
+# There are 2 diffrent packages to install one is ansible-core, this has minimal packages with it. But for this project ansible (full package) will be installed 
 # install ansible
 apt install ansible
 ```
@@ -49,7 +45,7 @@ Powershell is also used when it comes to windows system
 
 #### GIT
 GIT and github is used and is recommended so work dosent get lost. specialy when so much is in codes.
-and good thing with ansible togheter with github. its simple to clone to another computer and puch the work from there or keep working on the codes from there.
+and good thing with ansible togheter with github. its simple to clone to another computer and much the work from there or keep working on the codes from there.
 some commands that i use alot
 ```
 git pull
