@@ -3,15 +3,15 @@
 
 This project will be about ansible and how it works.
 Setup in this project will be 
-1 Manager vm. Ubuntu OS desktop version. From here ansible will manage other hosts
-5 Ubuntu 24.04 server
-5 Debian 12 server
+1 Manager vm. Ubuntu OS desktop version. From here ansible will manage other hosts.
 
-configuring 
+5 Ubuntu 24.04 server.
 
-
+5 Debian 12 server.
 
 
+
+configuring:
 
 Ansible is an agentless automation tool that you install on a single host.
 Example is that you install it on you desktop or a dedicated server for it and it can be installed simply with very few commands or step.
