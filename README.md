@@ -9,6 +9,9 @@ Setup in this project will be
 
 5 Debian 12 server.
 
+<img width="457" height="248" alt="bild" src="https://github.com/user-attachments/assets/b5cfee7b-38c1-4166-94b6-8a1a16190e25" />
+
+
 
 
 configuring:
