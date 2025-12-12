@@ -38,7 +38,7 @@ Example is that Debian and Ubuntu are installed with a template on this example,
 The template kickstarts a virtuall machine with wanted OS, user name, ssh-key and so on. so these machine are empty but has all the needed credentials added. Easy and fast to get up and running for work tasks.
 
 
-Ansible in writen in python codes. But for setting up playbook and etc (will be seen later in the README ) YAML code is used.
+Ansible is writen in python codes. But for setting up playbook and etc (will be seen later in the README ) YAML code is used.
 templates and variables are connected/written in jinja2.
 when ansible talks to a host/module it uses JSON.but that ansible handles all itself.
 Powershell is also used when it comes to windows system
