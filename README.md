@@ -134,7 +134,7 @@ It makes commands easier and smaller, but when and if wanted there are commands 
 nano ansible.cfg
 ```
 writing and adding wanted config for ansbile to use.
-```
+```yml
 [defaults]
 inventory = inventory
 
@@ -144,7 +144,7 @@ private_key_file = ~/.ssh/id_ed25519
 
 host_key_checking = False      
 retry_files_enabled = False    # don't create *.retry files
-stdout_callback = yaml         # Newer output than the olrd standard
+stdout_callback = yaml         # Newer output than the old standard
 interpreter_python = auto_silent
 
 forks = 10                     # how many hosts to let ansible connect at once
