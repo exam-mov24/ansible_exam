@@ -1133,3 +1133,8 @@ mysql -h 10.8.0.x -u exam_24 -p exam_24
 ```
 
 # END OF  PROJECT
+
+> [!WARNING]
+> Everything was created in a test environment. All credentials and secrets are used only for testing and are removed shortly afterward.
+>
+> Even for testing, limit access to the host running Ansible. It may hold keys to AWS/Azure where mistakes can become costly.
