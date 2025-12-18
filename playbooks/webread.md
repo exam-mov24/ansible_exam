@@ -3,7 +3,7 @@ run
 Host are set to [web]
 
 ```bash
-# Test
+# Test  --diff can be added for more info
 ansible-playbook -C web.yml
 
 # live run
