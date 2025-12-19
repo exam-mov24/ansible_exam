@@ -21,13 +21,6 @@
       when: ansible_os_family == "Debian"
       tags: [apt, upgrade]
 
-
-    - name: Upgrade all packages to latest version (Debian/Ubuntu)
-      ansible.builtin.apt:
-        upgrade: dist
-      when: ansible_os_family == "Debian"
-      tags: [apt, upgrade]
-
     - name: Install some base tools (Debian/Ubuntu)
       ansible.builtin.apt:
         name:
