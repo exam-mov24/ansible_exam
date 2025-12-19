@@ -1,5 +1,5 @@
 ---
-- name: Web server setup (Apache + PHP + index.html from GitHub)
+- name: Web server setup Apache + PHP + index.html from GitHub
   hosts: web
   become: true
 
@@ -9,7 +9,7 @@
 
 
   tasks:
-    - name: Ensure apt cache is updated (Debian/Ubuntu)
+    - name: Ensure apt cache is updated debian,ubuntu
       ansible.builtin.apt:
         update_cache: yes
         cache_valid_time: 3600
@@ -17,7 +17,7 @@
       tags: [apt]
 
 
-    - name: Install Apache and PHP packages (Debian/Ubuntu)
+    - name: Install Apache and PHP packages debian,ubuntu
       ansible.builtin.apt:
         name:
           - apache2
